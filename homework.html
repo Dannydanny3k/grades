@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Grades Tool</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease;
+        }
+
+        .container {
+            background: linear-gradient(135deg, #ffdf00, #f9a825);
+            border-radius: 12px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            transform: scale(1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .container:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: #000;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 12px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #f9a825;
+            outline: none;
+        }
+
+        button {
+            padding: 12px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 1rem;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #f9a825;
+            transform: translateY(-3px);
+        }
+
+        button:active {
+            background-color: #e68900;
+            transform: translateY(1px);
+        }
+
+        h3 {
+            color: #333;
+            margin-top: 20px;
+            font-size: 1.2rem;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        li {
+            background-color: #fff;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        li:hover {
+            background-color: #ffeb3b;
+            cursor: pointer;
+        }
+
+        .average-grade {
+            font-weight: bold;
+            color: #f9a825;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .fade {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Student Grades Tool</h2>
+        <label for="studentName">Student name:</label>
+        <input type="text" id="studentName" placeholder="Enter student name">
+        <br>
+
+        <label for="studentGrade">Grade:</label>
+        <input type="number" id="studentGrade" placeholder="Enter grade">
+        <br>
+
+        <div style="text-align: center;">
+            <button onclick="addGrade()">Add Grade</button>
+            <button onclick="calculateAverage()">Calculate Average</button>
+        </div>
+
+        <h3>Student Grades:</h3>
+        <ul id="studentList"></ul>
+
+        <h3>Average Grades:</h3>
+        <ul id="averageResults"></ul>
+        
+        <div id="errorMessage" class="error-message"></div>
+    </div>
+
+    <script>
+        const students = {};
+
+        function updateStudentList() {
+            const studentList = document.getElementById("studentList");
+            studentList.innerHTML = "";
+
+            for (const [name, grades] of Object.entries(students)) {
+                const listItem = document.createElement("li");
+                listItem.textContent = `${name}: ${grades.join(", ")}`;
+                studentList.appendChild(listItem);
+            }
+            studentList.classList.add('fade');
+        }
+
+        function addGrade() {
+            const name = document.getElementById("studentName").value.trim();
+            const grade = parseFloat(document.getElementById("studentGrade").value);
+
+            if (!name || isNaN(grade) || grade < 0 || grade > 100) {
+                document.getElementById("errorMessage").textContent = "Please enter a valid name and grade between 0 and 100.";
+                return;
+            }
+
+            document.getElementById("errorMessage").textContent = "";
+
+            if (!students[name]) {
+                students[name] = [];
+            }
+
+            students[name].push(grade);
+            updateStudentList();
+        }
+
+        function calculateAverage() {
+            const averageResults = document.getElementById("averageResults");
+            averageResults.innerHTML = "";
+
+            for (const [name, grades] of Object.entries(students)) {
+                const gradeSum = grades.reduce((a, b) => a + b, 0);
+                const gradeAverage = (gradeSum / grades.length).toFixed(2);
+
+                const listItem = document.createElement("li");
+                listItem.innerHTML = `${name}'s Average Grade: <span class="average-grade">${gradeAverage}</span>`;
+                averageResults.appendChild(listItem);
+            }
+            averageResults.classList.add('fade');
+        }
+    </script>
+</body>
+</html>
